@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { localizePath, t } from '../i18n/ui';
+
+const locale = 'zh-tw' as const;
+---
+
+<BaseLayout locale={locale} title={t(locale, 'notFoundTitle')} showHeaderMedia={false}>
+	<div class="container not-found">
+		<h1 class="not-found__title">{t(locale, 'notFoundTitle')}</h1>
+		<p>{t(locale, 'notFoundBody')}</p>
+		<a class="button" href={localizePath(locale)}>{t(locale, 'backHome')}</a>
+		<p style="margin-top: 1rem;">
+			<a href="/en/">{t(locale, 'langEn')}</a>
+		</p>
+	</div>
+</BaseLayout>

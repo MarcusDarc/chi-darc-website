@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContactForm from '../../components/ContactForm.astro';
+import { t } from '../../i18n/ui';
+import { withLocale } from '../../lib/paths';
+
+const locale = 'en' as const;
+---
+
+<BaseLayout locale={locale} title={t(locale, 'contactTitle')} description={t(locale, 'contactIntro')} alternateUrl={withLocale('zh-tw', '/contact/')}>
+	<div class="container">
+		<header class="page-hero">
+			<h1 class="page-hero__title">{t(locale, 'contactTitle')}</h1>
+			<p class="page-hero__intro">{t(locale, 'contactIntro')}</p>
+		</header>
+		<ContactForm locale={locale} />
+	</div>
+</BaseLayout>

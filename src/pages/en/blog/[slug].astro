@@ -1,0 +1,67 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Sidebar from '../../../components/Sidebar.astro';
+import { categoryNames, localizePath, t } from '../../../i18n/ui';
+import { formatDate, getPosts } from '../../../lib/posts';
+import { withLocale } from '../../../lib/paths';
+
+export async function getStaticPaths() {
+	const posts = await getPosts('en');
+	return posts.map((post) => ({
+		params: { slug: post.data.postSlug },
+		props: { post },
+	}));
+}
+
+const locale = 'en' as const;
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { title, description, pubDate, categories, tags, cover, postSlug } = post.data;
+---
+
+<BaseLayout
+	locale={locale}
+	title={title}
+	description={description}
+	alternateUrl={withLocale('zh-tw', `/blog/${postSlug}/`)}
+>
+	<div class="container page-layout">
+		<article class="article">
+			{
+				cover && (
+					<div class="article__cover">
+						<img src={cover} alt="" />
+					</div>
+				)
+			}
+			<div class="article__meta">
+				{
+					categories.map((c, i) => (
+						<>
+							{i > 0 && ' / '}
+							<a href={localizePath(locale, `category/${c}`)}>{categoryNames[locale][c] ?? c}</a>
+						</>
+					))
+				}
+				{' · '}
+				<span
+					>{t(locale, 'postedOn')}
+					<time datetime={pubDate.toISOString()}>{formatDate(pubDate, locale)}</time></span
+				>
+			</div>
+			<h1 class="article__title">{title}</h1>
+			<div class="article__content">
+				<Content />
+			</div>
+			{
+				tags.length > 0 && (
+					<p class="article__tags">
+						{t(locale, 'tags')}: {tags.join(', ')}
+					</p>
+				)
+			}
+		</article>
+		<Sidebar locale={locale} excludeSlug={postSlug} />
+	</div>
+</BaseLayout>

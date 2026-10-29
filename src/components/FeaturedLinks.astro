@@ -1,0 +1,43 @@
+---
+import { localizePath, t, type Locale } from '../i18n/ui';
+import { getPosts } from '../lib/posts';
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const posts = await getPosts(locale);
+const keys = [
+	{ key: 'venice', label: t(locale, 'venice'), fallbackImage: '/images/img-66be39bbba.jpg' },
+	{ key: 'cardiff-capital', label: t(locale, 'cardiff'), fallbackImage: '/images/royal-arcade-cardiff.jpg' },
+	{ key: 'singapore-solo-trip', label: t(locale, 'singapore'), fallbackImage: '/images/img-81d5d85941.jpg' },
+];
+
+const items = keys.map((item) => {
+	const post = posts.find((p) => p.data.translationKey === item.key);
+	return {
+		label: item.label,
+		href: post ? localizePath(locale, `blog/${post.data.postSlug}`) : localizePath(locale),
+		image: post?.data.cover || item.fallbackImage,
+	};
+});
+---
+
+<section class="featured-links">
+	<div class="container">
+		<h2 class="featured-links__title">{t(locale, 'featuredLinks')}</h2>
+		<div class="featured-links__grid">
+			{
+				items.map((item) => (
+					<a class="featured-link" href={item.href}>
+						<span class="featured-link__media">
+							<img src={item.image} alt="" loading="lazy" />
+						</span>
+						<span class="featured-link__label">{item.label}</span>
+					</a>
+				))
+			}
+		</div>
+	</div>
+</section>

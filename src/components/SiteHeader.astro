@@ -1,0 +1,40 @@
+---
+import { localizePath, t, type Locale } from '../i18n/ui';
+import { withLocale } from '../lib/paths';
+
+interface Props {
+	locale: Locale;
+	showMedia?: boolean;
+}
+
+const { locale, showMedia = true } = Astro.props;
+const zhUrl = withLocale('zh-tw', Astro.url.pathname);
+const enUrl = withLocale('en', Astro.url.pathname);
+const homeUrl = localizePath(locale);
+---
+
+<header class="site-header">
+	{showMedia && <div class="site-header__media" aria-hidden="true"></div>}
+	<div class="top-bar">
+		<div class="container top-bar__inner">
+			<a class="brand-mark brand-mark--compact" href={homeUrl} aria-label={t(locale, 'siteName')}>
+				<img class="brand-mark__logo" src="/favicon.png" alt="" width="28" height="28" />
+				<span class="brand-mark__text">hi Darc</span>
+			</a>
+			<nav class="lang-switch" aria-label={t(locale, 'language')}>
+				<a class:list={['lang-switch__link', { 'lang-switch__link--active': locale === 'zh-tw' }]} href={zhUrl} hreflang="zh-Hant"
+					>{t(locale, 'langZh')}</a
+				>
+				<a class:list={['lang-switch__link', { 'lang-switch__link--active': locale === 'en' }]} href={enUrl} hreflang="en"
+					>{t(locale, 'langEn')}</a
+				>
+			</nav>
+		</div>
+	</div>
+	<div class="container site-header__inner">
+		<p class="site-header__brand">
+			<a href={homeUrl}>{t(locale, 'headerTitle')}</a>
+		</p>
+		<p class="site-header__tagline">{t(locale, 'tagline')}</p>
+	</div>
+</header>

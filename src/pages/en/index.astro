@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FeaturedLinks from '../../components/FeaturedLinks.astro';
+import PostCard from '../../components/PostCard.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import { getPosts } from '../../lib/posts';
+import { withLocale } from '../../lib/paths';
+
+const locale = 'en' as const;
+const posts = await getPosts(locale);
+---
+
+<BaseLayout locale={locale} alternateUrl={withLocale('zh-tw', '/')}>
+	<FeaturedLinks locale={locale} />
+	<div class="container page-layout">
+		<section>
+			<ul class="post-list">
+				{posts.map((post) => (
+					<li>
+						<PostCard post={post} locale={locale} />
+					</li>
+				))}
+			</ul>
+		</section>
+		<Sidebar locale={locale} />
+	</div>
+</BaseLayout>

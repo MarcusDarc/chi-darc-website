@@ -1,0 +1,45 @@
+---
+import { categoryNames, localizePath, t, type Locale } from '../i18n/ui';
+import { formatDate, type Post } from '../lib/posts';
+
+interface Props {
+	post: Post;
+	locale: Locale;
+}
+
+const { post, locale } = Astro.props;
+const { title, description, pubDate, postSlug, categories, cover } = post.data;
+const href = localizePath(locale, `blog/${postSlug}`);
+---
+
+<article class="post-card">
+	{
+		cover && (
+			<a class="post-card__media" href={href} tabindex="-1" aria-hidden="true">
+				<img src={cover} alt="" loading="lazy" />
+			</a>
+		)
+	}
+	<div class="post-card__body">
+		<div class="post-card__meta">
+			{
+				categories.length > 0 && (
+					<div class="post-card__categories">
+						{categories.map((c, i) => (
+							<>
+								{i > 0 && ' / '}
+								<a href={localizePath(locale, `category/${c}`)}>{categoryNames[locale][c] ?? c}</a>
+							</>
+						))}
+					</div>
+				)
+			}
+			<time datetime={pubDate.toISOString()}>{formatDate(pubDate, locale)}</time>
+		</div>
+		<h2 class="post-card__title">
+			<a href={href}>{title}</a>
+		</h2>
+		<p class="post-card__excerpt">{description}</p>
+		<a class="post-card__more" href={href}>{t(locale, 'readMore')}</a>
+	</div>
+</article>

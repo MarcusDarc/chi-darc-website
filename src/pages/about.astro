@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { t } from '../i18n/ui';
+import { withLocale } from '../lib/paths';
+
+const locale = 'zh-tw' as const;
+---
+
+<BaseLayout locale={locale} title={t(locale, 'aboutTitle')} description={t(locale, 'aboutBody')} alternateUrl={withLocale('en', '/about/')}>
+	<div class="container">
+		<header class="page-hero">
+			<h1 class="page-hero__title">{t(locale, 'aboutTitle')}</h1>
+		</header>
+		<article class="article page-layout--single" style="margin-bottom: var(--space-2xl);">
+			<p>{t(locale, 'aboutBody')}</p>
+		</article>
+	</div>
+</BaseLayout>

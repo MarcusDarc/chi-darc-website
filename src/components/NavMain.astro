@@ -1,0 +1,50 @@
+---
+import { localizePath, t, type Locale } from '../i18n/ui';
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const path = Astro.url.pathname;
+
+const items = [
+	{ href: localizePath(locale), label: t(locale, 'navHome'), match: locale === 'en' ? /^\/en\/?$/ : /^\/$/ },
+	{ href: localizePath(locale, 'about'), label: t(locale, 'navAbout'), match: /\/about\/?$/ },
+	{ href: localizePath(locale, 'category/europe'), label: t(locale, 'navEurope'), match: /\/category\/europe\/?/ },
+	{ href: localizePath(locale, 'category/uk'), label: t(locale, 'navUk'), match: /\/category\/uk\/?/ },
+	{ href: localizePath(locale, 'category/asia'), label: t(locale, 'navAsia'), match: /\/category\/asia\/?/ },
+	{ href: localizePath(locale, 'contact'), label: t(locale, 'navContact'), match: /\/contact\/?$/ },
+];
+---
+
+<nav class="nav-main" aria-label="Main">
+	<div class="container nav-main__inner">
+		<button class="nav-main__toggle" type="button" aria-expanded="false" aria-controls="main-menu" data-nav-toggle>
+			Menu
+		</button>
+		<ul class="nav-main__list" id="main-menu" data-nav-list>
+			{
+				items.map((item) => (
+					<li>
+						<a
+							class:list={['nav-main__link', { 'nav-main__link--active': item.match.test(path) }]}
+							href={item.href}
+						>
+							{item.label}
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</nav>
+
+<script>
+	const toggle = document.querySelector('[data-nav-toggle]');
+	const list = document.querySelector('[data-nav-list]');
+	toggle?.addEventListener('click', () => {
+		const open = list?.classList.toggle('nav-main__list--open');
+		toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+	});
+</script>

@@ -1,0 +1,58 @@
+---
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import NavMain from '../components/NavMain.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { defaultLocale, type Locale, t } from '../i18n/ui';
+
+interface Props {
+	locale?: Locale;
+	title?: string;
+	description?: string;
+	alternateUrl?: string;
+	showHeaderMedia?: boolean;
+}
+
+const {
+	locale = defaultLocale,
+	title,
+	description,
+	alternateUrl,
+	showHeaderMedia = true,
+} = Astro.props;
+
+const siteTitle = t(locale, 'siteName');
+const pageTitle = title ? `${title} · ${siteTitle}` : siteTitle;
+const pageDescription = description ?? t(locale, 'tagline');
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const otherLocale: Locale = locale === 'en' ? 'zh-tw' : 'en';
+---
+
+<!doctype html>
+<html lang={locale === 'zh-tw' ? 'zh-Hant' : 'en'}>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={pageDescription} />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<link rel="canonical" href={canonical} />
+		{alternateUrl && (
+			<>
+				<link rel="alternate" hreflang={otherLocale === 'zh-tw' ? 'zh-Hant' : 'en'} href={new URL(alternateUrl, Astro.site)} />
+				<link rel="alternate" hreflang={locale === 'zh-tw' ? 'zh-Hant' : 'en'} href={canonical} />
+			</>
+		)}
+		<title>{pageTitle}</title>
+	</head>
+	<body>
+		<div class="site">
+			<SiteHeader locale={locale} showMedia={showHeaderMedia} />
+			<NavMain locale={locale} />
+			<main class="site__main">
+				<slot />
+			</main>
+			<SiteFooter locale={locale} />
+		</div>
+	</body>
+</html>

@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import Sidebar from '../../../components/Sidebar.astro';
+import { categoryNames, t } from '../../../i18n/ui';
+import { getAllCategories, getPostsByCategory } from '../../../lib/posts';
+import { withLocale } from '../../../lib/paths';
+
+export async function getStaticPaths() {
+	const categories = await getAllCategories('en');
+	return categories.map((slug) => ({ params: { slug } }));
+}
+
+const locale = 'en' as const;
+const { slug } = Astro.params;
+const posts = await getPostsByCategory(locale, slug!);
+const title = categoryNames[locale][slug!] ?? slug!;
+---
+
+<BaseLayout
+	locale={locale}
+	title={title}
+	description={`${t(locale, 'relatedCategory')}: ${title}`}
+	alternateUrl={withLocale('zh-tw', `/category/${slug}/`)}
+>
+	<div class="container">
+		<header class="page-hero">
+			<h1 class="page-hero__title">{title}</h1>
+			<p class="page-hero__intro">{t(locale, 'relatedCategory')}</p>
+		</header>
+		<div class="page-layout">
+			<section>
+				{
+					posts.length === 0 ? (
+						<p>{t(locale, 'allPosts')}</p>
+					) : (
+						<ul class="post-list">
+							{posts.map((post) => (
+								<li>
+									<PostCard post={post} locale={locale} />
+								</li>
+							))}
+						</ul>
+					)
+				}
+			</section>
+			<Sidebar locale={locale} />
+		</div>
+	</div>
+</BaseLayout>

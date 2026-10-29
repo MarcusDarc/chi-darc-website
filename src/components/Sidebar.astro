@@ -1,0 +1,45 @@
+---
+import { categoryNames, localizePath, t, type Locale } from '../i18n/ui';
+import { getAllCategories, getPosts, type Post } from '../lib/posts';
+
+interface Props {
+	locale: Locale;
+	excludeSlug?: string;
+}
+
+const { locale, excludeSlug } = Astro.props;
+const recent = (await getPosts(locale)).filter((p) => p.data.postSlug !== excludeSlug).slice(0, 5);
+const categories = await getAllCategories(locale);
+
+function thumb(post: Post) {
+	return post.data.cover || '/images/cwmparc-hill.jpg';
+}
+---
+
+<aside class="sidebar">
+	<section class="widget">
+		<h2 class="widget__title">{t(locale, 'recentPosts')}</h2>
+		<ul class="widget__list">
+			{
+				recent.map((post) => (
+					<li class="widget__item">
+						<a href={localizePath(locale, `blog/${post.data.postSlug}`)}>
+							<img class="widget__thumb" src={thumb(post)} alt="" loading="lazy" />
+							<span class="widget__item-title">{post.data.title}</span>
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+	<section class="widget">
+		<h2 class="widget__title">{t(locale, 'categories')}</h2>
+		<div class="widget__cats">
+			{
+				categories.map((c) => (
+					<a href={localizePath(locale, `category/${c}`)}>{categoryNames[locale][c] ?? c}</a>
+				))
+			}
+		</div>
+	</section>
+</aside>

@@ -1,0 +1,42 @@
+---
+import { t, type Locale } from '../i18n/ui';
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<form class="contact-form" data-contact-form novalidate>
+	<div class="contact-form__field">
+		<label class="contact-form__label" for="contact-name">{t(locale, 'formName')}</label>
+		<input class="contact-form__input" id="contact-name" name="name" type="text" required autocomplete="name" />
+	</div>
+	<div class="contact-form__field">
+		<label class="contact-form__label" for="contact-email">{t(locale, 'formEmail')}</label>
+		<input class="contact-form__input" id="contact-email" name="email" type="email" required autocomplete="email" />
+	</div>
+	<div class="contact-form__field">
+		<label class="contact-form__label" for="contact-subject">{t(locale, 'formSubject')}</label>
+		<input class="contact-form__input" id="contact-subject" name="subject" type="text" />
+	</div>
+	<div class="contact-form__field">
+		<label class="contact-form__label" for="contact-message">{t(locale, 'formMessage')}</label>
+		<textarea class="contact-form__textarea" id="contact-message" name="message" required></textarea>
+	</div>
+	<div class="contact-form__actions">
+		<button class="contact-form__submit" type="submit">{t(locale, 'formSubmit')}</button>
+		<p class="contact-form__note">{t(locale, 'formNote')}</p>
+	</div>
+	<p class="contact-form__status" data-contact-status role="status">{t(locale, 'formNote')}</p>
+</form>
+
+<script>
+	const form = document.querySelector('[data-contact-form]');
+	const status = document.querySelector('[data-contact-status]');
+	form?.addEventListener('submit', (event) => {
+		event.preventDefault();
+		status?.classList.add('contact-form__status--visible');
+	});
+</script>
